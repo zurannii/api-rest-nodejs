@@ -1,11 +1,11 @@
 import fastify from 'fastify'
-import crypto from 'node:crypto'
-import knex from 'knex'
 import { env, title } from 'node:process'
 import { transactionsRoutes } from './routes/transactions'
+import cookie from '@fastify/cookie'
 
 const app = fastify()
 
+app.register(cookie)
 app.register(transactionsRoutes, {
   prefix: 'transactions',
 })

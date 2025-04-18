@@ -1,11 +1,38 @@
-import fastify, { FastifyInstance } from "fastify"
-import { env, title } from "node:process"
+import { FastifyInstance } from "fastify"
 import { knex } from "../database"
 import { z } from "zod"
+import crypto from "node:crypto"
 
 export async function transactionsRoutes(app: FastifyInstance) {
-    app.post('/', async (request, reply) => { 
 
+    app.get('/', async () => {
+        const transactions = await knex('transactions').select()
+        return { transactions }
+    })
+
+    app.get('/summary', async () => {
+        const summary = await knex('transactions')
+            .sum('amount', { as: 'amount' })
+            .first()
+
+        return { summary }
+    })
+
+    app.get('/:id', async (request) => {
+        const getTransactionParamsSchema = z.object({
+            id: z.string().uuid(),
+        })
+
+        const { id } = getTransactionParamsSchema.parse(request.params)
+
+        const transaction = await knex('transactions')
+            .where('id', id)
+            .first()
+
+        return { transaction }
+    })
+
+    app.post('/', async (request, reply) => {
         const createTransactionBodySchema = z.object({
             title: z.string(),
             amount: z.number(),
@@ -16,14 +43,24 @@ export async function transactionsRoutes(app: FastifyInstance) {
             request.body
         )
 
-        const transaction = await knex('transactions')
-        .insert({
+        let sessionId = request.cookies.sessionId
+
+        if (!sessionId) {
+            sessionId = crypto.randomUUID()
+
+            reply.cookie('sessionId', sessionId, {
+                path: '/',
+                maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+            })
+        }
+
+        await knex('transactions').insert({
             id: crypto.randomUUID(),
             title,
-            amount: type === 'credit' ?  amount : amount * -1,
+            amount: type === 'credit' ? amount : amount * -1,
+            session_id: sessionId,
         })
-        
-    
-      return reply.status(201).send()
+
+        return reply.status(201).send()
     })
 }
