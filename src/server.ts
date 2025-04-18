@@ -6,10 +6,12 @@ import { transactionsRoutes } from './routes/transactions'
 
 const app = fastify()
 
-app.register(transactionsRoutes)
+app.register(transactionsRoutes, {
+  prefix: 'transactions',
+})
 
 app.listen({
-    port: env.PORT ? parseInt(env.PORT, 10) : 3000,
+    port: env.PORT ? parseInt(env.PORT, 10) : 3333,
 })
     .then(() => {
     console.log('HTTP server running!')
