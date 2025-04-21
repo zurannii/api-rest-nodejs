@@ -15,8 +15,8 @@ export const config: Knex.Config = {
   useNullAsDefault: true,
   migrations: {
     extension: 'ts',
-    directory: path.resolve(__dirname, '..', 'migrations'),
+    directory: path.resolve(__dirname, '..', 'database', 'migrations'),
   },
-};
 
+};
 export const knex = setupKnex(config);
