@@ -1,3 +1,6 @@
 node_modules
 database/app
+database/test.db
 .env
+.env.test
+build

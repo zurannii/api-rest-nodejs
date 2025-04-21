@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "knex": "node --no-warnings --import tsx ./node_modules/.bin/knex",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "build": "tsup src --out-dir build"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,8 @@
     "@types/supertest": "^6.0.3",
     "supertest": "^7.1.0",
     "ts-node": "^10.9.2",
+    "tsu": "^2.12.0",
+    "tsup": "^8.4.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
